@@ -1,7 +1,7 @@
 // # authOptions (NextAuth config)
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { prisma } from "@/modules/auth/infrastructure/prismaAdapter";
+import { prisma } from "@/lib/prismaAdapter";
 import type { NextAuthOptions } from "next-auth";
 
 // เพิ่ม type augmentation (optional) เพื่อให้ session.user.id รู้ type

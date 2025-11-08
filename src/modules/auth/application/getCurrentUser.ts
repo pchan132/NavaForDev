@@ -2,7 +2,7 @@
 // ใช้ getServerSession จาก next-auth แทนการดึง session จาก request โดยตรง
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "../infrastructure/prismaAdapter";
+import { prisma } from "../../../lib/prismaAdapter";
 
 export async function getCurrentUser() {
   const session = await getServerSession(authOptions);
