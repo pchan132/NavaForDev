@@ -30,6 +30,7 @@ export class PrismaProjectRepository implements IProjectRepository {
     return this.mapPrismaProjectToProject(newProject);
   }
 
+  //   เมธอดสำหรับค้นหาโปรเจกต์ตาม userId
   async findProjectsByUserId(userId: string): Promise<Project[]> {
     const projects = await prisma.project.findMany({
       where: { userId },
@@ -46,6 +47,26 @@ export class PrismaProjectRepository implements IProjectRepository {
     return projects.map((project) => this.mapPrismaProjectToProject(project));
   }
 
+  //   เมธอดสำหรับค้นหาโปรเจกต์ตาม projectId
+  async findProjectById(projectId: string) {
+    const project = await prisma.project.findUnique({
+      where: { id: projectId },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        userId: true,
+        status: true,
+        createdAt: true,
+      },
+    });
+    if (!project) {
+      return null;
+    }
+    return this.mapPrismaProjectToProject(project);
+  }
+
+  //   เมธอดสำหรับอัปเดตข้อมูลโปรเจกต์
   async updateDataProject(
     projectId: string,
     updateData: Partial<Omit<Project, "id" | "createdAt">>
@@ -73,6 +94,7 @@ export class PrismaProjectRepository implements IProjectRepository {
     return this.mapPrismaProjectToProject(updatedProject);
   }
 
+  //   เมธอดสำหรับลบโปรเจกต์
   async deleteProject(projectId: string): Promise<void> {
     await prisma.project.delete({
       where: { id: projectId },

@@ -9,6 +9,8 @@ export interface IProjectRepository {
 
   findProjectsByUserId(userId: string): Promise<Project[]>;
 
+  findProjectById(projectId: string): Promise<Project | null>;
+
   updateDataProject(
     projectId: string,
     updateData: Partial<Omit<Project, "id" | "createdAt">>
