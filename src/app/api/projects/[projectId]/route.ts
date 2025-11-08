@@ -5,11 +5,10 @@ import { UpdateProjectUseCase } from "@/modules/project/application/updateProjec
 import { DeleteProjectUseCase } from "@/modules/project/application/deleteProject.usecase"; // นำเข้า use-case สำหรับลบโปรเจกต์
 
 // Api route สำหรับดึงเฉพาะโปรเจกต์ method: GET
-interface idProps {
-  params: { projectId: string };
-}
-
-export async function GET({ params }: idProps) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ projectId: string }> }
+) {
   try {
     const user = await getCurrentUser();
 
@@ -22,14 +21,14 @@ export async function GET({ params }: idProps) {
       );
     }
 
-    const { projectId } = params;
+    const { projectId } = await params;
     console.log("Fetching project with ID:", projectId);
 
     const projectRepository = new PrismaProjectRepository();
 
     const project = await projectRepository.findProjectById(projectId);
 
-    if (!project) {
+    if (!project || project.userId !== user.id) {
       return NextResponse.json(
         { message: "Project not found" },
         { status: 404 }
@@ -47,7 +46,10 @@ export async function GET({ params }: idProps) {
 }
 
 // Api route สำหรับแก้ไขโปรเจกต์ method: PUT
-export async function PUT({ params, request }: idProps & { request: Request }) {
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ projectId: string }> }
+) {
   try {
     const user = await getCurrentUser();
 
@@ -60,7 +62,7 @@ export async function PUT({ params, request }: idProps & { request: Request }) {
       );
     }
 
-    const { projectId } = params;
+    const { projectId } = await params;
     const body = await request.json();
 
     const projectRepository = new PrismaProjectRepository();
@@ -105,7 +107,10 @@ export async function PUT({ params, request }: idProps & { request: Request }) {
 }
 
 // Api route สำหรับลบโปรเจกต์ method: DELETE
-export async function DELETE({ params }: idProps) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ projectId: string }> }
+) {
   try {
     const user = await getCurrentUser();
 
@@ -118,7 +123,7 @@ export async function DELETE({ params }: idProps) {
       );
     }
 
-    const { projectId } = params;
+    const { projectId } = await params;
     const projectRepository = new PrismaProjectRepository();
     const deleteProjectUseCase = new DeleteProjectUseCase(projectRepository);
 
